@@ -15,3 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [DashboardController::class , 'index']); //this accesses the index function in the dashboard controller
+
+Route::get('/terms', function(){
+    return view('terms');
+});
