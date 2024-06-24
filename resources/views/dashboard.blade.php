@@ -37,6 +37,7 @@
         </div>
     </div>
     <div class="col-6">
+        @include('shared.success-message')
         @include('shared.submit-idea')
         <hr>
         @foreach ($ideas as $idea)
@@ -44,6 +45,8 @@
             @include('shared.idea-card')
             </div>
         @endforeach
+        <div class="mt-2"></div>
+        {{ $ideas->links('pagination::bootstrap-4') }}
     </div>
     <div class="col-3">
         <div class="card">
@@ -58,7 +61,7 @@
             </div>
         </div>
         <div class="card mt-3">
-            <div class="card-header pb-0 border-0">
+            <div class="card-header pb-0 border-3">
                 <h5 class="">Who to follow</h5>
             </div>
             <div class="card-body">
