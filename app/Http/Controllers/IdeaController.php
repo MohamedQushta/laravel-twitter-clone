@@ -14,10 +14,9 @@ class IdeaController extends Controller
         return view('ideas.show', compact('idea', 'editing'));
     }
     public function update(Idea $idea){
-        request()->validate([
+        $validated = request()->validate([
             'content' => 'required|min:5|max:255',
         ]);
-        $idea->content = request()->get('content', '');
         $idea->save();
         return redirect()->route('ideas.show', $idea->id)->with('success', 'Idea updated successfully');
     }
@@ -29,15 +28,12 @@ class IdeaController extends Controller
     }
     public function store(){
 
-        request()->validate([
+        $validated = request()->validate([
             'content' => 'required|min:5|max:255',
+            //required means that it is required to fill in the text area
         ]);
-        //required means that it is required to fill in the text area
-        $idea = Idea::create(
-            [
-                'content' => request()->get('content', null),//this gets the idea from the form using the name of the text are that contains the idea
-            ]
-            );
+
+            Idea::create($validated);
 
             return redirect()->route('dashboard')->with('success', 'Idea created successfully');
     }

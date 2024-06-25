@@ -16,7 +16,7 @@ class DashboardController extends Controller
             $ideas = $ideas->where('content', 'LIKE', '%'.request('search').'%');
         }
         return view('dashboard', [
-            'ideas' => $ideas->paginate(10)
+            'ideas' => $ideas->paginate(3)
         ]);
     }
 }

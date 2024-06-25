@@ -8,6 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Idea extends Model
 {
     use HasFactory;
+    //this ensures that these attributes are not mass assignable
+    protected $guarded = [
+        'id',
+        'created_at',
+        'updated_at',
+    ];
     protected $fillable = [
         'content',
         'likes',
