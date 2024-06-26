@@ -1,3 +1,4 @@
+@auth()
 <h4> Share yours ideas </h4>
 <div class="row">
     {{-- url function adds the base url to the url --}}
@@ -18,3 +19,7 @@
         </div>
     </form>
 </div>
+@endauth()
+@guest
+    <h4>Login to share your Ideas</h4>
+@endguest

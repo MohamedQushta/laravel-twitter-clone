@@ -8,7 +8,7 @@ data-bs-theme="dark">
     </button>
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
         <ul class="navbar-nav">
-            @guest //this is for guest users
+            @guest
             <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="/login">Login</a>
             </li>
@@ -16,9 +16,17 @@ data-bs-theme="dark">
                 <a class="nav-link" href="/register">Register</a>
             </li>
             @endguest
-            @auth() //this is for auth users, checks if the user is logged in
+            @auth()
             <li class="nav-item">
                 <a class="nav-link" href="/profile">{{ Auth::user()->name }}</a>
+            </li>
+            <li class="nav-item">
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button class="btn btn-danger btn-sm" type="submit">
+                        Logout
+                    </button>
+                </form>
             </li>
             @endauth
         </ul>

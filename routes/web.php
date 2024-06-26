@@ -19,30 +19,24 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
+Route::get('', [DashboardController::class , 'index'])->name('dashboard'); //this accesses the index function in the dashboard controller
+Route::group(['prefix' => 'ideas/', 'as' => 'ideas.', 'middleware' => ['auth']], function () {
 
-Route::get('/', [DashboardController::class , 'index'])->name('dashboard'); //this accesses the index function in the dashboard controller
+    Route::post ('/', [IdeaController::class , 'store'])->name('store'); //this creates a new idea, and gives it a name
 
-Route::post ('/ideas', [IdeaController::class , 'store'])->name('ideas.store'); //this creates a new idea, and gives it a name
+    Route::get('/{idea}', [IdeaController::class , 'show'])->name('show');
+    Route::group(['middleware'=>['auth']], function(){
+        Route::get('/{idea}/edit', [IdeaController::class, 'edit'])->name('edit');
 
-Route::get('/ideas/{idea}', [IdeaController::class , 'show'])->name('ideas.show');
+        Route::put('/{idea}', [IdeaController::class, 'update'])->name('update');
 
-Route::get('/ideas/{idea}/edit', [IdeaController::class, 'edit'])->name('ideas.edit');
+        Route::delete('/{idea}', [IdeaController::class, 'destroy'])->name('destroy');
 
-Route::put('/ideas/{idea}', [IdeaController::class, 'update'])->name('ideas.update');
+        Route::post('/{idea}/comments', [CommentController::class , 'store'] )->name('comments.store')->middleware('auth');
+    });
 
-Route::delete('/ideas/{idea}', [IdeaController::class, 'destroy'])->name('ideas.destroy');
+});
 
-Route::post('/ideas/{idea}/comments', [CommentController::class , 'store'] )->name('ideas.comments.store');
-
-Route::get('/register', [AuthController::class , 'register'] )->name('register');
-
-Route::post('/register', [AuthController::class , 'store'] );
-
-Route::get('/login', [AuthController::class , 'login'] )->name('login');
-
-Route::post('/login', [AuthController::class , 'authenticate'] );
-
-Route::post('/logout', [AuthController::class, 'logout'] )->name('logout');
 
 Route::get('/terms', function(){
     return view('terms');

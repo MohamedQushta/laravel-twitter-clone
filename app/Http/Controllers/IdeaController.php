@@ -27,18 +27,21 @@ class IdeaController extends Controller
         return view('ideas.show', compact('idea')); //this passes the idea to the view using compact, finds a variable with the same name as the key and passes it to the view
     }
     public function store(){
-
         $validated = request()->validate([
             'content' => 'required|min:5|max:255',
             //required means that it is required to fill in the text area
         ]);
+        $validated['user_id'] = auth()->id();
+        Idea::create($validated);
 
-            Idea::create($validated);
-
-            return redirect()->route('dashboard')->with('success', 'Idea created successfully');
+        return redirect()->route('dashboard')->with('success', 'Idea created successfully');
     }
-    public function destroy(Idea $id){
-        $id->delete(); //this utilizes the route model binding to delete the idea with the given id
+    public function destroy(Idea $idea){
+        if(auth()->id()!== $idea->user_id){
+            abort(404,'User not authorized');
+        }
+
+        $idea->delete(); //this utilizes the route model binding to delete the idea with the given id
         return redirect()->route('dashboard')->with('success', 'Idea deleted successfully');
     }
 }
