@@ -43,6 +43,24 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
     public function ideas(){
-        return $this->hasMany(Idea::class);
+        return $this->hasMany(Idea::class)->latest();
+    }
+
+
+    //follower_id = our_id
+    //user_id = followed_person_id
+    public function followings(){
+        return $this->belongsToMany(User::class,'user_follower','follower_id', 'user_id')->withTimestamps();
+    }
+
+    public function followers(){
+        return $this->belongsToMany(User::class,'user_follower','user_id', 'follower_id')->withTimestamps();
+    }
+
+    public function follows(User $user){
+        return $this->followings()->where('user_id', $user->id)->exists();
+    }
+    public function comments(){
+        return $this->hasMany(Comment::class)->latest();
     }
 }

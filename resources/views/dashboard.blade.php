@@ -8,13 +8,17 @@
         @include('shared.success-message')
         @include('shared.submit-idea')
         <hr>
-        @foreach ($ideas as $idea)
+        @if (count($ideas) > 0)
+            @foreach ($ideas as $idea)
             <div class="mt-3">
-            @include('shared.idea-card')
+                @include('shared.idea-card')
             </div>
-        @endforeach
+            @endforeach
+        @else
+            <h4>No ideas found</h4>
+        @endif
         <div class="mt-2"></div>
-        {{ $ideas->links('pagination::bootstrap-4') }}
+        {{ $ideas->withQueryString()->links('pagination::bootstrap-4') }}
     </div>
     <div class="col-3">
         @include('shared.search-bar')
