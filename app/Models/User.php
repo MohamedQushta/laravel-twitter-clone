@@ -19,6 +19,8 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'bio',
+        'image',
         'email',
         'password',
     ];
@@ -42,25 +44,33 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
     public function ideas(){
         return $this->hasMany(Idea::class)->latest();
     }
 
-
-    //follower_id = our_id
-    //user_id = followed_person_id
-    public function followings(){
-        return $this->belongsToMany(User::class,'user_follower','follower_id', 'user_id')->withTimestamps();
-    }
-
-    public function followers(){
-        return $this->belongsToMany(User::class,'user_follower','user_id', 'follower_id')->withTimestamps();
-    }
-
-    public function follows(User $user){
-        return $this->followings()->where('user_id', $user->id)->exists();
-    }
     public function comments(){
         return $this->hasMany(Comment::class)->latest();
     }
+
+    public function followings(){
+        return $this->belongsToMany(User::class,'follower_user','follower_id','user_id')->withTimestamps();
+    }
+
+    public function followers(){
+        return $this->belongsToMany(User::class,'follower_user','user_id','follower_id')->withTimestamps();
+    }
+
+    public function follows(User $user){
+        return $this->followings()->where('user_id',$user->id)->exists();
+    }
+
+    public function likes(){
+        return $this->belongsToMany(Idea::class, 'idea_like')->withTimestamps();
+    }
+
+    public function likesIdea(Idea $idea){
+        return $this->likes()->where('idea_id', $idea->id)->exists();
+    }
 }
+

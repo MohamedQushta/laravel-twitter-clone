@@ -5,43 +5,60 @@ namespace App\Http\Controllers;
 use App\Models\Idea;
 use Illuminate\Http\Request;
 
-use function Ramsey\Uuid\v1;
-
 class IdeaController extends Controller
 {
-    public function edit(Idea $idea){
-        $editing = true;
-        return view('ideas.show', compact('idea', 'editing'));
-    }
-    public function update(Idea $idea){
-        $validated = request()->validate([
-            'content' => 'required|min:5|max:255',
-        ]);
-        $idea->save();
-        return redirect()->route('ideas.show', $idea->id)->with('success', 'Idea updated successfully');
-    }
+
     public function show(Idea $idea){
-        // return view('ideas.show', [
-        //     'idea' => $idea, //this passes the idea to the view
-        // ]); //this passes the idea to the view
-        return view('ideas.show', compact('idea')); //this passes the idea to the view using compact, finds a variable with the same name as the key and passes it to the view
+
+        return view('ideas.show',compact('idea'));
     }
-    public function store(){
+
+    public function store()
+    {
         $validated = request()->validate([
-            'content' => 'required|min:5|max:255',
-            //required means that it is required to fill in the text area
+            'content' => 'required|min:3|max:240'
         ]);
+        
         $validated['user_id'] = auth()->id();
+
         Idea::create($validated);
 
-        return redirect()->route('dashboard')->with('success', 'Idea created successfully');
+        return redirect()->route('dashboard')->with('success','Idea created successfully !');
     }
+
     public function destroy(Idea $idea){
-        if(auth()->id()!== $idea->user_id){
-            abort(404,'User not authorized');
+        
+        if(auth()->id() !== $idea->user_id){
+            abort(404);
         }
 
-        $idea->delete(); //this utilizes the route model binding to delete the idea with the given id
-        return redirect()->route('dashboard')->with('success', 'Idea deleted successfully');
+        $idea->delete();
+
+        return redirect()->route('dashboard')->with('success','Idea deleted successfully !');
+    }
+
+    public function edit(Idea $idea){
+        
+        if(auth()->id() !== $idea->user_id){
+            abort(404);
+        }
+
+        $editing = true;
+
+        return view('ideas.show',compact('idea','editing'));
+    }
+
+    public function update(Idea $idea){
+        if(auth()->id() !== $idea->user_id){
+            abort(404);
+        }
+
+        $validated = request()->validate([
+            'content' => 'required|min:3|max:240'
+        ]);
+
+        $idea->update($validated);
+
+        return redirect()->route('ideas.show',$idea->id)->with('success',"Idea updated successfully!");
     }
 }

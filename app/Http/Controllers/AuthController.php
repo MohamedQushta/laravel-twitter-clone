@@ -1,8 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Mail\WelcomeEmail;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -10,58 +15,61 @@ class AuthController extends Controller
     {
         return view('auth.register');
     }
-    public function store(){
-        //validate the request
+
+    public function store()
+    {
         $validated = request()->validate(
             [
-                'name' => 'required|min:3|max:255',
-                'email' => 'required|email|max:255|unique:users,email',
-                'password' => 'required|min:8|confirmed|max:255',
-                //confirmed means that the password and password_confirmation must be the same
+                'name' => 'required|min:3|max:40',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|confirmed|min:8'
             ]
         );
-        //create a user
+
+
         $user = User::create(
             [
                 'name' => $validated['name'],
                 'email' => $validated['email'],
-                'password' => bcrypt($validated['password']),
+                'password' => Hash::make($validated['password']),
             ]
         );
 
-        //redirect to the dashboard
-        return redirect()->route('dashboard')->with('success', 'Account created successfully');
+
+        return redirect()->route('dashboard')->with('success', 'Account created Successfully!');
     }
+
     public function login()
     {
         return view('auth.login');
     }
-    public function authenticate(){
-        //validate the request
+    //TODO FINISH THIS
+    public function authenticate()
+    {
         $validated = request()->validate(
             [
                 'email' => 'required|email',
-                'password' => 'required|min:8',
-                //confirmed means that the password and password_confirmation must be the same
+                'password' => 'required|min:8'
             ]
         );
 
-        if(auth()->attempt($validated))
-        {
+        if (auth()->attempt($validated)) {
             request()->session()->regenerate();
-            return redirect()->route('dashboard')->with('success', 'Account logged in successfully');
+
+            return redirect()->route('dashboard')->with('success', 'Logged in successfully!');
         }
-        return redirect()->route('login')->withErrors(
-            [
-                'email' => 'No user match this credentials'
-            ]
-        );
+
+        return redirect()->route('login')->withErrors([
+            'email' => "No matching user found with the provided email and password"
+        ]);
     }
+
     public function logout(){
-        //this function logs the user out
         auth()->logout();
+
         request()->session()->invalidate();
         request()->session()->regenerateToken();
+
         return redirect()->route('dashboard')->with('success', 'logged out successfully');
     }
 }

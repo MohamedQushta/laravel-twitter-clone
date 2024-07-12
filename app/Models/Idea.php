@@ -4,20 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User;
 
 class Idea extends Model
 {
     use HasFactory;
-    //this ensures that these attributes are not mass assignable
-    protected $guarded = [
-        'id',
-        'created_at',
-        'updated_at',
-    ];
+
+    protected $with = ['user:id,name,image','comments.user:id,name,image'];
+
     protected $fillable = [
+        'user_id',
         'content',
-        'likes',
-        'user_id'
+        'like'
     ];
 
     public function comments(){
@@ -26,5 +24,9 @@ class Idea extends Model
 
     public function user(){
         return $this->belongsTo(User::class);
+    }
+
+    public function likes(){
+        return $this->belongsToMany(User::class, 'idea_like')->withTimestamps();
     }
 }

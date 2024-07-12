@@ -13,10 +13,8 @@ return new class extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            //constrained means that the id in the idea table must exist in the id column in the idea table
-            //onDelete means that if the idea is deleted, the comments will also be deleted
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('idea_id')->constrained()->onDelete('cascade');
+            $table->foreignId('idea_id')->constrained()->cascadeOnDelete();
             $table->string('content');
             $table->timestamps();
         });
